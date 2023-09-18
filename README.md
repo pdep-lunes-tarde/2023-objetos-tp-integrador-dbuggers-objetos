@@ -4,6 +4,8 @@ Nombre: **COMPLETAR ACA**
 
 Integrantes: **COMPLETAR ACA**
 
+Juego: Blackjack
+
 # Consigna TP Integrador
 
 Hacer un juego aplicando los conceptos de la materia. El tp tiene una parte práctica, que es programar el juego en sí, y una parte teórica, que es justificar decisiones que hayan tomado y mencionar para resolver qué problemas utilizaron los conceptos de la materia.
