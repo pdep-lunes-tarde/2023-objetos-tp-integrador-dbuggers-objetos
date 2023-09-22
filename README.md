@@ -1,8 +1,17 @@
 # Grupo
 
-Nombre: **COMPLETAR ACA**
+Nombre: Dbuggers
 
-Integrantes: **COMPLETAR ACA**
+Integrantes:
+
+- Legajo: 160766-2 
+- Nombre: Alejo Travieso
+
+- Legajo: 209180-0
+- Nombre: Gonzalo Salas Vetre
+
+- Legajo: 1675060 
+- Nombre: Matias Daniel Iannuccilli
 
 Juego: Blackjack
 
