@@ -46,3 +46,11 @@ b) Tomar alguna clase definida en su programa y justificar por qué es una clase
 
 c) De haber algún objeto definido con `object`, justificar por qué.
 
+### Respuestas:
+
+a) Carta y As son polimórficos porque ambos contienen un índice y valor, y el jugador y el repartidor los usan de forma polimórfica a la hora de calcular la suma de las cartas.
+Jugador y Repartidor son polimórficos porque ambos contienen una mano y tienen los métodos sumaMano y sePaso, además son usados para verificar el valor a tomar del As.
+
+b) Carta y As son clases porque puede haber varias instancias de estos, por ejemplo, cartas de diferentes valores o diferentes palos.
+
+c) Repartidor es un objeto porque es único y el jugador es objetos porque por ahora es solo 1.
