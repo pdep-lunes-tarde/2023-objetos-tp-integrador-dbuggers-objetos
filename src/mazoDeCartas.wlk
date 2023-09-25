@@ -1,8 +1,7 @@
 import carta.*
 
 object mazo {
-	
-	method agregarCartas(mazoPredefinido) {
+	method mazoLleno(mazoPredefinido) {
 		mazoPredefinido.add(new Carta(indice = "2♣", valor = 2))
 		mazoPredefinido.add(new Carta(indice = "3♣", valor = 3))
 		mazoPredefinido.add(new Carta(indice = "4♣", valor = 4))
@@ -15,8 +14,7 @@ object mazo {
 		mazoPredefinido.add(new Carta(indice = "J♣", valor = 10))
 		mazoPredefinido.add(new Carta(indice = "Q♣", valor = 10))
 		mazoPredefinido.add(new Carta(indice = "K♣", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "A♣", valor = 11))
-		
+		mazoPredefinido.add(new As(indice = "A♣"))
 		mazoPredefinido.add(new Carta(indice = "2♥", valor = 2))
 		mazoPredefinido.add(new Carta(indice = "3♥", valor = 3))
 		mazoPredefinido.add(new Carta(indice = "4♥", valor = 4))
@@ -29,6 +27,6 @@ object mazo {
 		mazoPredefinido.add(new Carta(indice = "J♥", valor = 10))
 		mazoPredefinido.add(new Carta(indice = "K♥", valor = 10))
 		mazoPredefinido.add(new Carta(indice = "Q♥", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "A♥", valor = 11))
+		mazoPredefinido.add(new As(indice = "A♥")
 	}
 }

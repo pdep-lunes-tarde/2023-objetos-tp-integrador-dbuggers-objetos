@@ -2,39 +2,58 @@
 
 import mazoDeCartas.*
 
-object partida {
+object repartidor {
 	const property mazoEnPartida = new List()
+	const property mano = new Set()
 	
-	method repartirCartasIniciales(jugador) {
-		jugador.mano().add(new Carta(indice = "10♣", valor = 10))
-		jugador.mano().add(new Carta(indice = "5♦", valor = 5))
+	method repartirCartasIniciales() {
+		jugador.mano().add(self.elegirCartaAleatorio())
+		jugador.mano().add(self.elegirCartaAleatorio())
+		mano.add(self.elegirCartaAleatorio())
+		mano.add(self.elegirCartaAleatorio())
 	}
 	
-	method darCarta() {
-		jugador.mano().add(new Carta(indice = "3♦", valor = 10))
+	method sumaMano() {
+		return mano.sum({carta => carta.valor()})
+	}
+	
+	method darCarta(persona) {
+		persona.mano().add(self.elegirCartaAleatorio())
 	}
 	
 	method llenarMazo() {
-		mazo.agregarCartas(self.mazoEnPartida())
+		mazoEnPartida.clear()
+		mazo.mazoLleno(mazoEnPartida)
 	}
 	
 	method elegirCartaAleatorio() {
-		if (self.mazoEnPartida().isEmpty()) {
-			return 0
+		if (mazoEnPartida.isEmpty()) {
+			self.llenarMazo()
 		}
-		const indiceAleatorio = 0..self.mazoEnPartida().size()
-		const cartaElegida = self.mazoEnPartida().get(indiceAleatorio.anyOne())
-		self.mazoEnPartida().remove(cartaElegida)
+		const indiceAleatorio = 0..mazoEnPartida.size()
+		const cartaElegida = mazoEnPartida.get(indiceAleatorio.anyOne())
+		mazoEnPartida.remove(cartaElegida)
 		return cartaElegida
 	}
 	
+	method sePaso() {
+		return self.sumaMano() > 21
+	}
 }
 
 object jugador {
 	const property mano = new Set()
 	
 	method sumaMano() {
-		return self.mano().sum({carta => carta.valor()})
+		return mano.sum({carta => carta.valor()})
+	}
+	
+	method pedirCarta() {
+		repartidor.darCarta(self)
+	}
+	
+	method sePaso() {
+		return self.sumaMano() > 21
 	}
 }
 
@@ -45,13 +64,12 @@ class Carta {
 
 class As {
 	const property indice
-	const property valor = 1
 	
-	method valorEnPartida(jugador) {
-		if (jugador.suma() == 0) {
-			return 0
+	method valor(persona) {
+		if (persona.sePaso()) {
+			return 1
 		} 
-		return 1
+		return 11
 	}
 }
 
