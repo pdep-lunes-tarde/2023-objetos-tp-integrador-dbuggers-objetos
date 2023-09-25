@@ -1,5 +1,6 @@
 import tp.*
 
 program juego {
+	partida.empezarRonda()
 	tpIntegrador.jugar()
 }

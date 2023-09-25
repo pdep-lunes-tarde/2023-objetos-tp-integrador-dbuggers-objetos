@@ -1,5 +1,51 @@
+import mazoDeCartas.*
+import carta.*
+import jugador.*
 import tp.*
 
-test "Test de ejemplo" {
-		assert.equals(4, 2 + 2)
+describe "mazoDeCartas" {
+	test "El mazo de cartas tiene 52 cartas en total" {
+		assert.equals(mazo.mazoLleno().size(), 52)
+	}
+}
+
+describe "jugador" {
+	test "El jugador empieza la ronda con dos cartas" {
+		partida.empezarRonda()
+		const cantCartasJugador = jugador.mano().size()
+		assert.equals(cantCartasJugador, 2)
+	}
+	test "El repartidor empieza la ronda con dos cartas" {
+		partida.empezarRonda()
+		const cantCartasRepartidor = repartidor.mano().size()
+		assert.equals(cantCartasRepartidor, 2)
+	}
+	test "Si las dos primeras cartas suman 21 es blackjack" {
+		const primerCarta = new Carta(indice = "10♥", valor = 10)
+		const segundaCarta = new As(indice = "A♥")
+		jugador.mano().add(primerCarta)
+		jugador.mano().add(segundaCarta)
+		assert.equals(jugador.esBlackjack(), true)
+	}
+	test "Si las dos primeras cartas suman mas de 21, se paso" {
+		const primerCarta = new Carta(indice = "10♥", valor = 10)
+		const segundaCarta = new Carta(indice = "6♥", valor = 6)
+		const tercerCarta = new Carta(indice = "K♣", valor = 10)
+		jugador.mano().add(primerCarta)
+		jugador.mano().add(segundaCarta)
+		jugador.mano().add(tercerCarta)
+		assert.equals(jugador.sePaso(), true)
+	}
+}
+
+describe "carta" {
+	test "Cuando el jugador se pasa de 21 el as toma como valor el 1" {
+		const primerCarta = new Carta(indice = "10♥", valor = 10)
+		const segundaCarta = new As(indice = "A♥")
+		const tercerCarta = new Carta(indice = "K♣", valor = 10)
+		jugador.mano().add(primerCarta)
+		jugador.mano().add(segundaCarta)
+		jugador.mano().add(tercerCarta)
+		assert.equals(segundaCarta.valor(jugador), 1)
+	}
 }
