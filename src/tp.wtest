@@ -40,12 +40,17 @@ describe "jugador" {
 
 describe "carta" {
 	test "Cuando el jugador se pasa de 21 el as toma como valor el 1" {
-		const primerCarta = new Carta(indice = "10♥", valor = 10)
+		const primerCarta = new Carta(indice = "7♥", valor = 7)
 		const segundaCarta = new As(indice = "A♥")
 		const tercerCarta = new Carta(indice = "K♣", valor = 10)
+		var suma = jugador.sumaMano()
 		jugador.mano().add(primerCarta)
+		suma += primerCarta.valor(jugador)
 		jugador.mano().add(segundaCarta)
+		suma += segundaCarta.valor(jugador)
 		jugador.mano().add(tercerCarta)
+		suma += segundaCarta.valor(jugador)
+		jugador.sumaTotal(suma)
 		assert.equals(segundaCarta.valor(jugador), 1)
 	}
 }

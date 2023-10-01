@@ -2,23 +2,29 @@ import carta.*
 import mazoDeCartas.*
 
 object repartidor {
-	const property mazoEnPartida = new List()
-	const property mano = new Set()
+	const property mazoEnPartida = new Set()
+	const property mano = new List()
+	var property sumaTotal = 0
 	//var property estado = "En juego"
 	
 	method repartirCartasIniciales() {
-		jugador.mano().add(self.elegirCartaAleatorio())
-		jugador.mano().add(self.elegirCartaAleatorio())
-		mano.add(self.elegirCartaAleatorio())
-		mano.add(self.elegirCartaAleatorio())
+		self.darCarta(jugador)
+		self.darCarta(jugador)
+		self.recibirCarta()
+		self.recibirCarta()
 	}
 	
 	method sumaMano() = mano.sum({carta => carta.valor(self)})
 	
 	method darCarta(persona) {
 		const cartaElegida = self.elegirCartaAleatorio()
-		//cartaElegida.verificarValor(persona)
+		const suma = persona.sumaMano()
 		persona.mano().add(cartaElegida)
+		persona.sumaTotal(suma + cartaElegida.valor(self))
+	}
+	
+	method recibirCarta() {
+		self.darCarta(self)
 	}
 	
 	method llenarMazo() {
@@ -45,7 +51,8 @@ object repartidor {
 }
 
 object jugador {
-	const property mano = new Set()
+	const property mano = new List()
+	var property sumaTotal = 0
 	//var property estado = "En juego"
 	
 	method sumaMano() = mano.sum({carta => carta.valor(self)})

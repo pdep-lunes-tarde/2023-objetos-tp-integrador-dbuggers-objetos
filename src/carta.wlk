@@ -12,11 +12,11 @@ class As {
 	var property valor = 11
 
 	method valor(persona) {
-		if (persona.sePaso()) { // Arreglar problema con el as
+		const suma = persona.sumaTotal()
+		if (suma > 21 && valor == 11) { // Arreglar problema con el as
 			valor = 1
-			return valor
+			persona.sumaTotal(suma-10)
 		}
-		valor = 11
 		return valor
 	}
 }

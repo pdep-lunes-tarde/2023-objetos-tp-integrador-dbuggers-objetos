@@ -1,60 +1,36 @@
 import carta.*
 
 object mazo {
+	const palos = ['♣','♥','♠','♦']
+	const indicesYValores = new Dictionary()
+	
+	method crearRegistroIndicesYValores() {
+		const indices = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+		const valores = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+		self.agregarIndicesYValores(indices, valores)
+	}
+	
+	method agregarIndicesYValores(indices, valores) {
+		if (not indices.isEmpty()) {
+			indicesYValores.put(indices.first(), valores.first())
+			self.agregarIndicesYValores(indices.drop(1), valores.drop(1))
+		}
+	}
+	
 	method mazoLleno() {
-		const mazoPredefinido = new Set()
-		mazoPredefinido.add(new Carta(indice = "2♣", valor = 2))
-		mazoPredefinido.add(new Carta(indice = "3♣", valor = 3))
-		mazoPredefinido.add(new Carta(indice = "4♣", valor = 4))
-		mazoPredefinido.add(new Carta(indice = "5♣", valor = 5))
-		mazoPredefinido.add(new Carta(indice = "6♣", valor = 6))
-		mazoPredefinido.add(new Carta(indice = "7♣", valor = 7))
-		mazoPredefinido.add(new Carta(indice = "8♣", valor = 8))
-		mazoPredefinido.add(new Carta(indice = "9♣", valor = 9))
-		mazoPredefinido.add(new Carta(indice = "10♣", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "J♣", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "Q♣", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "K♣", valor = 10))
-		mazoPredefinido.add(new As(indice = "A♣"))
-		mazoPredefinido.add(new Carta(indice = "2♥", valor = 2))
-		mazoPredefinido.add(new Carta(indice = "3♥", valor = 3))
-		mazoPredefinido.add(new Carta(indice = "4♥", valor = 4))
-		mazoPredefinido.add(new Carta(indice = "5♥", valor = 5))
-		mazoPredefinido.add(new Carta(indice = "6♥", valor = 6))
-		mazoPredefinido.add(new Carta(indice = "7♥", valor = 7))
-		mazoPredefinido.add(new Carta(indice = "8♥", valor = 8))
-		mazoPredefinido.add(new Carta(indice = "9♥", valor = 9))
-		mazoPredefinido.add(new Carta(indice = "10♥", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "J♥", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "K♥", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "Q♥", valor = 10))
-		mazoPredefinido.add(new As(indice = "A♥"))
-		mazoPredefinido.add(new Carta(indice = "2♦", valor = 2))
-		mazoPredefinido.add(new Carta(indice = "3♦", valor = 3))
-		mazoPredefinido.add(new Carta(indice = "4♦", valor = 4))
-		mazoPredefinido.add(new Carta(indice = "5♦", valor = 5))
-		mazoPredefinido.add(new Carta(indice = "6♦", valor = 6))
-		mazoPredefinido.add(new Carta(indice = "7♦", valor = 7))
-		mazoPredefinido.add(new Carta(indice = "8♦", valor = 8))
-		mazoPredefinido.add(new Carta(indice = "9♦", valor = 9))
-		mazoPredefinido.add(new Carta(indice = "1♦", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "J♦", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "K♦", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "Q♦", valor = 10))
-		mazoPredefinido.add(new As(indice = "A♦"))
-		mazoPredefinido.add(new Carta(indice = "2♠", valor = 2))
-		mazoPredefinido.add(new Carta(indice = "3♠", valor = 3))
-		mazoPredefinido.add(new Carta(indice = "4♠", valor = 4))
-		mazoPredefinido.add(new Carta(indice = "5♠", valor = 5))
-		mazoPredefinido.add(new Carta(indice = "6♠", valor = 6))
-		mazoPredefinido.add(new Carta(indice = "7♠", valor = 7))
-		mazoPredefinido.add(new Carta(indice = "8♠", valor = 8))
-		mazoPredefinido.add(new Carta(indice = "9♠", valor = 9))
-		mazoPredefinido.add(new Carta(indice = "1♠", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "J♠", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "K♠", valor = 10))
-		mazoPredefinido.add(new Carta(indice = "Q♠", valor = 10))
-		mazoPredefinido.add(new As(indice = "A♠"))
-		return mazoPredefinido
+		self.crearRegistroIndicesYValores()
+		return indicesYValores.keys().map({
+			indice => palos.map({
+				palo => return self.agregarCarta(palo, indice)
+			})
+		}).flatten()
+	}
+	
+	method agregarCarta(palo, id) {
+		const valorCarta = indicesYValores.get(id)
+		if (id == 'A') {
+			return new As(indice = palo + id)
+		}
+		return new Carta(indice = palo + id, valor = valorCarta)
 	}
 }
