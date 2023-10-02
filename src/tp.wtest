@@ -22,7 +22,7 @@ describe "jugador" {
 	}
 	test "Si las dos primeras cartas suman 21 es blackjack" {
 		const primerCarta = new Carta(indice = "10♥", valor = 10)
-		const segundaCarta = new As(indice = "A♥")
+		const segundaCarta = new As(indice = "A♥", valor = 11)
 		jugador.mano().add(primerCarta)
 		jugador.mano().add(segundaCarta)
 		assert.equals(jugador.esBlackjack(), true)
@@ -41,7 +41,7 @@ describe "jugador" {
 describe "carta" {
 	test "Cuando el jugador se pasa de 21 el as toma como valor el 1" {
 		const primerCarta = new Carta(indice = "7♥", valor = 7)
-		const segundaCarta = new As(indice = "A♥")
+		const segundaCarta = new As(indice = "A♥", valor = 11)
 		const tercerCarta = new Carta(indice = "K♣", valor = 10)
 		var suma = jugador.sumaMano()
 		jugador.mano().add(primerCarta)

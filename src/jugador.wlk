@@ -1,17 +1,20 @@
 import carta.*
 import mazoDeCartas.*
+import wollok.game.*
 
 object repartidor {
-	const property mazoEnPartida = new Set()
+	const property mazoEnPartida = new List()
 	const property mano = new List()
 	var property sumaTotal = 0
+	const property posY = 10
+	var property posX = 5
 	//var property estado = "En juego"
 	
 	method repartirCartasIniciales() {
 		self.darCarta(jugador)
 		self.darCarta(jugador)
-		self.recibirCarta()
-		self.recibirCarta()
+		self.darCarta(self)
+		self.darCarta(self)
 	}
 	
 	method sumaMano() = mano.sum({carta => carta.valor(self)})
@@ -19,11 +22,15 @@ object repartidor {
 	method darCarta(persona) {
 		const cartaElegida = self.elegirCartaAleatorio()
 		const suma = persona.sumaMano()
+		const x = persona.posX()
+		persona.posX(x+2)
 		persona.mano().add(cartaElegida)
 		persona.sumaTotal(suma + cartaElegida.valor(self))
+		const pos = game.at(x,persona.posY())
+		game.addVisualIn(cartaElegida, pos)
 	}
 	
-	method recibirCarta() {
+	method pedirCarta() {
 		self.darCarta(self)
 	}
 	
@@ -53,6 +60,8 @@ object repartidor {
 object jugador {
 	const property mano = new List()
 	var property sumaTotal = 0
+	const property posY = 3
+	var property posX = 5
 	//var property estado = "En juego"
 	
 	method sumaMano() = mano.sum({carta => carta.valor(self)})
@@ -62,18 +71,6 @@ object jugador {
 	}
 	
 	method sePaso() = self.sumaMano() > 21
-	
-	//method sumaManoActual() = mano.sum({carta => carta.valor()})
-	
-	//method seVaAPasar() = self.sumaManoActual() > 21
-	
-	/*method sePaso() {
-		if (self.sumaMano() > 21) {
-			estado = "Se paso"
-			return true 
-		}
-		return false
-	}*/
 	
 	/*method plantarse() {
 		estado = "Se planto"

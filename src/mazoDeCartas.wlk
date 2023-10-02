@@ -29,7 +29,7 @@ object mazo {
 	method agregarCarta(palo, id) {
 		const valorCarta = indicesYValores.get(id)
 		if (id == 'A') {
-			return new As(indice = palo + id)
+			return new As(indice = palo + id, valor = valorCarta)
 		}
 		return new Carta(indice = palo + id, valor = valorCarta)
 	}

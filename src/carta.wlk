@@ -1,19 +1,23 @@
+import wollok.game.*
+
 // ♣♥♠♦
 
 class Carta {
 	const property indice
-	const property valor
+	var property valor
+	var property image = "./imagenes/cartas/carta.png"
 	
 	method valor(persona) = valor
 }
 
 class As {
 	const property indice
-	var property valor = 11
+	var property valor
+	var property image = "./imagenes/cartas/carta.png"
 
 	method valor(persona) {
-		const suma = persona.sumaTotal()
-		if (suma > 21 && valor == 11) { // Arreglar problema con el as
+		const suma = persona.sumaTotal()// Arreglo temporal
+		if (suma > 21 && valor == 11) { 
 			valor = 1
 			persona.sumaTotal(suma-10)
 		}

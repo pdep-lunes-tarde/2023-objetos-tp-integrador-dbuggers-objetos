@@ -1,13 +1,14 @@
 import wollok.game.*
 import jugador.*
 
-object tpIntegrador {
-	method jugar() {
+object configuracion {
+	method config() {
 		game.width(25)
   		game.height(15)
-		game.addVisual(carta)
+		
 		game.boardGround("./imagenes/fondo/fondo_blackjack.jpg")
-		game.start()
+		
+		keyboard.p().onPressDo { jugador.pedirCarta() }
 	}
 }
 
@@ -15,11 +16,10 @@ object partida {
 	method empezarRonda() {
 		repartidor.llenarMazo()
 		repartidor.repartirCartasIniciales()
+		if (jugador.esBlackjack()) self.mostrarCartel()
 	}
-}
-
-object carta {
-  var property position = game.origin()
-
-  method image() = "./imagenes/cartas/carta.png"
+	
+	method mostrarCartel() {
+		game.say(jugador, "Ganaste")
+	}
 }
