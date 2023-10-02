@@ -14,7 +14,7 @@ object partida {
 	
 	method empezarRonda() {
 		if (not partidaEnJuego) {
-			game.removeVisual(cartelEmpezar)
+			if (game.hasVisual(cartelEmpezar)) game.removeVisual(cartelEmpezar)
 			self.partidaEnJuego(true)
 			repartidor.llenarMazo()
 			repartidor.repartirCartasIniciales()
@@ -47,12 +47,13 @@ object partida {
 	}
 	
 	method ganador() {
+		if (jugador.esBlackjack() && repartidor.esBlackjack()) return "Empate"
 		if (jugador.esBlackjack()) return "¡BlackJack!"
+		if (repartidor.esBlackjack()) return "Perdiste por BlackJack"
 		if (jugador.sePaso() && repartidor.sePaso()) return "Ambos se pasaron"
 		if (jugador.sePaso()) return "Perdiste"
-		if (repartidor.sePaso()) return "Ganaste"
+		if (repartidor.sePaso() || jugador.sumaMano() > repartidor.sumaMano()) return "Ganaste"
 		if (jugador.sumaMano() == repartidor.sumaMano()) return "Empate"
-		if (jugador.sumaMano() > repartidor.sumaMano()) return "Ganaste"
 		return "Perdiste"
 	}
 }

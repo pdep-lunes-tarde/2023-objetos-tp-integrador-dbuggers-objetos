@@ -3,14 +3,37 @@ import mazoDeCartas.*
 import wollok.game.*
 import tp.*
 
-object repartidor {
-	const property mazoEnPartida = new List()
+class Jugador {
 	const property mano = new List()
 	var property sumaTotal = 0
-	const property posY = 10
+	const property posY
 	var property posX = 5
 	const property position = new Position(x=posX-3, y=posY)
 	var property enJuego = false
+	
+	method sumaMano() = mano.sum({carta => carta.valor(self)})
+	
+	method sePaso() = self.sumaMano() > 21
+	
+	method text() = "Suma de cartas: " + self.sumaMano().toString()
+	
+	method textColor() = "FFFFFF"
+	
+	method esBlackjack() = self.sumaMano() == 21 && mano.size() == 2
+	
+	method finMano() {
+		enJuego = false
+	}
+	
+	method plantarse() {
+		self.finMano()
+	}
+	
+	method pedirCarta()
+}
+
+object repartidor inherits Jugador(posY = 10) {
+	const property mazoEnPartida = new List()
 	
 	method repartirCartasIniciales() {
 		self.darCarta(jugador)
@@ -18,8 +41,6 @@ object repartidor {
 		self.darCarta(self)
 		self.darCarta(self)
 	}
-	
-	method sumaMano() = mano.sum({carta => carta.valor(self)})
 	
 	method darCarta(persona) {
 		const cartaElegida = self.elegirCartaAleatorio()
@@ -29,15 +50,12 @@ object repartidor {
 		cartaElegida.mostrar(persona)
 	}
 	
-	method pedirCarta() {
+	override method pedirCarta() {
 		if (self.sumaMano() < 16 && enJuego) {
 			self.darCarta(self)
 			self.pedirCarta()
 		}
-		else {
-			enJuego = false
-			partida.terminarRonda()
-		}
+		else self.finMano()
 	}
 	
 	method llenarMazo() {
@@ -54,46 +72,23 @@ object repartidor {
 		return cartaElegida
 	}
 	
-	method sePaso() = self.sumaMano() > 21
-	
-	method text() = "Suma de cartas: " + self.sumaMano().toString()
-	
-	method textColor() = "FFFFFF"
-	
-	method esBlackjack() = self.sumaMano() == 21 && mano.size() == 2
+	override method finMano() {
+		super()
+		partida.terminarRonda()
+	}
 }
 
-object jugador {
-	const property mano = new List()
-	var property sumaTotal = 0
-	const property posY = 3
-	var property posX = 5
-	const property position = new Position(x=posX-3, y=posY)
-	var property enJuego = false
+object jugador inherits Jugador(posY = 3) {
 	
-	method sumaMano() = mano.sum({carta => carta.valor(self)})
-	
-	method pedirCarta() {
+	override method pedirCarta() {
 		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
 		if (enJuego && self.sePaso()) self.finMano()
 	}
 	
-	method sePaso() = self.sumaMano() > 21
-	
-	method plantarse() {
-		self.finMano()
-	}
-	
-	method finMano() {
-		enJuego = false
+	override method finMano() {
+		super()
 		repartidor.pedirCarta()
 	}
-	
-	method text() = "Suma de cartas: " + self.sumaMano().toString()
-	
-	method textColor() = "FFFFFF"
-	
-	method esBlackjack() = self.sumaMano() == 21 && mano.size() == 2
 }
 
 
