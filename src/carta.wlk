@@ -1,7 +1,5 @@
 import wollok.game.*
 
-// ♣♥♠♦
-
 class Carta {
 	const property indice
 	var property valor
@@ -25,7 +23,7 @@ class Carta {
 class As inherits Carta {
 
 	override method valor(persona) {
-		const suma = persona.sumaTotal()// Arreglo temporal
+		const suma = persona.sumaTotal() // Arreglo temporal
 		if (suma > 21 && valor == 11) { 
 			valor = 1
 			persona.sumaTotal(suma-10)

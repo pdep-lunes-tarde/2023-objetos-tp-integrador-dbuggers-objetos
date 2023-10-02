@@ -11,7 +11,6 @@ object repartidor {
 	var property posX = 5
 	const property position = new Position(x=posX-3, y=posY)
 	var property enJuego = false
-	//var property estado = "En juego"
 	
 	method repartirCartasIniciales() {
 		self.darCarta(jugador)
@@ -71,13 +70,12 @@ object jugador {
 	var property posX = 5
 	const property position = new Position(x=posX-3, y=posY)
 	var property enJuego = false
-	//var property estado = "En juego"
 	
 	method sumaMano() = mano.sum({carta => carta.valor(self)})
 	
 	method pedirCarta() {
 		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
-		else self.finMano()
+		if (enJuego && self.sePaso()) self.finMano()
 	}
 	
 	method sePaso() = self.sumaMano() > 21
@@ -89,7 +87,6 @@ object jugador {
 	method finMano() {
 		enJuego = false
 		repartidor.pedirCarta()
-		// game.addVisualIn(self.sumaMano(), game.at(2,2))
 	}
 	
 	method text() = "Suma de cartas: " + self.sumaMano().toString()

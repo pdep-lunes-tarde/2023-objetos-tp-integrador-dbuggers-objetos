@@ -3,11 +3,6 @@ import jugador.*
 
 object configuracion {
 	method config() {
-		game.width(25)
-  		game.height(15)
-		
-		game.boardGround("./imagenes/fondo/fondo_blackjack.jpg")
-		
 		keyboard.space().onPressDo { partida.empezarRonda() }
 		keyboard.p().onPressDo { jugador.pedirCarta() }
 		keyboard.s().onPressDo { jugador.plantarse() }
@@ -19,6 +14,7 @@ object partida {
 	
 	method empezarRonda() {
 		if (not partidaEnJuego) {
+			game.removeVisual(cartelEmpezar)
 			self.partidaEnJuego(true)
 			repartidor.llenarMazo()
 			repartidor.repartirCartasIniciales()
@@ -26,34 +22,58 @@ object partida {
 			jugador.enJuego(true)
 			game.addVisual(jugador)
 			game.addVisual(repartidor)
-			if (jugador.esBlackjack()) self.mostrarCartel()
-			if (repartidor.esBlackjack()) self.mostrarCartel2()
+			if (jugador.esBlackjack()) self.terminarRonda()
+			// if (repartidor.esBlackjack()) self.terminarRonda()
 		}
 		
 	}
 	
 	method terminarRonda() {
 		self.partidaEnJuego(false)
-		game.addVisual(cartel)
-		game.schedule(3000, {game.clear()})
+		game.addVisual(cartelResultado)
+		game.schedule(5000, {self.reiniciarTablero()})
+	}
+	
+	method reiniciarTablero() {
+		game.clear()
+		jugador.mano().clear()
+		jugador.sumaTotal(0)
+		jugador.posX(5)
+		repartidor.mano().clear()
+		repartidor.sumaTotal(0)
+		repartidor.posX(5)
+		configuracion.config()
+		game.addVisual(cartelEmpezar)
 	}
 	
 	method ganador() {
+		if (jugador.esBlackjack()) return "¡BlackJack!"
 		if (jugador.sePaso() && repartidor.sePaso()) return "Ambos se pasaron"
-		return ""
-	}
-	
-	method mostrarCartel() {
-		game.say(jugador, "Ganaste")
-	}
-	
-	method mostrarCartel2() {
-		game.say(jugador, "Perdiste")
+		if (jugador.sePaso()) return "Perdiste"
+		if (repartidor.sePaso()) return "Ganaste"
+		if (jugador.sumaMano() == repartidor.sumaMano()) return "Empate"
+		if (jugador.sumaMano() > repartidor.sumaMano()) return "Ganaste"
+		return "Perdiste"
 	}
 }
 
-object cartel {
+class Cartel {
 	const property position = game.center()
 	
+	method textColor() = "FFFFFF"
+}
+
+object cartelResultado inherits Cartel {
 	method text() = partida.ganador()
 }
+
+object cartelEmpezar inherits Cartel {
+	method text() = "Apretar <espacio> para empezar"
+}
+
+object cartelCargando inherits Cartel {
+	method text() = "Cargando..."
+}
+
+
+
