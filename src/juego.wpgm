@@ -2,7 +2,6 @@ import tp.*
 import wollok.game.*
 
 program juego {
-	partida.empezarRonda()
 	configuracion.config()
 	game.start()
 }
