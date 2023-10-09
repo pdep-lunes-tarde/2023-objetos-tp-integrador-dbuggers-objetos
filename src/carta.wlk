@@ -3,7 +3,9 @@ import wollok.game.*
 class Carta {
 	const property indice
 	var property valor
-	var property image = "./imagenes/cartas/carta.png"
+	const frente = "./imagenes/cartas/carta.png"
+	const reverso = "./imagenes/cartas/back_side.png"
+	var property image = frente
 	var property position = new Position()
 	
 	method valor(persona) = valor
@@ -15,9 +17,14 @@ class Carta {
 		game.addVisualIn(self, position)
 	}
 	
-	method text() = "Carta: " + indice
+	method darVuelta() {
+		if (image == reverso) image = frente
+		else image = reverso
+	}
 	
-	method textColor() = "FF0000FF"
+	/* method text() = "Carta: " + indice
+	
+	method textColor() = "FF0000FF" */
 }
 
 class As inherits Carta {

@@ -21,12 +21,12 @@ class Jugador {
 	
 	method esBlackjack() = self.sumaMano() == 21 && mano.size() == 2
 	
-	method finMano() {
+	method finTurno() {
 		enJuego = false
 	}
 	
 	method plantarse() {
-		self.finMano()
+		self.finTurno()
 	}
 	
 	method pedirCarta()
@@ -40,6 +40,7 @@ object repartidor inherits Jugador(posY = 10) {
 		self.darCarta(jugador)
 		self.darCarta(self)
 		self.darCarta(self)
+		self.darVueltaPrimerCarta()
 	}
 	
 	method darCarta(persona) {
@@ -50,12 +51,16 @@ object repartidor inherits Jugador(posY = 10) {
 		cartaElegida.mostrar(persona)
 	}
 	
+	method darVueltaPrimerCarta() {
+		mano.get(0).darVuelta()
+	}
+	
 	override method pedirCarta() {
 		if (self.sumaMano() < 16 && enJuego) {
 			self.darCarta(self)
-			self.pedirCarta()
+			game.schedule(750, { self.pedirCarta() })
 		}
-		else self.finMano()
+		else self.finTurno()
 	}
 	
 	method llenarMazo() {
@@ -72,9 +77,15 @@ object repartidor inherits Jugador(posY = 10) {
 		return cartaElegida
 	}
 	
-	override method finMano() {
+	override method finTurno() {
 		super()
 		partida.terminarRonda()
+	}
+	
+	method empezarTurno() {
+		self.darVueltaPrimerCarta()
+		game.addVisual(self)
+		game.schedule(500, { self.pedirCarta() })
 	}
 }
 
@@ -82,12 +93,12 @@ object jugador inherits Jugador(posY = 3) {
 	
 	override method pedirCarta() {
 		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
-		if (enJuego && self.sePaso()) self.finMano()
+		if (enJuego && self.sePaso()) self.finTurno()
 	}
 	
-	override method finMano() {
+	override method finTurno() {
 		super()
-		repartidor.pedirCarta()
+		game.schedule(500, { repartidor.empezarTurno() })
 	}
 }
 

@@ -21,8 +21,10 @@ object partida {
 			repartidor.enJuego(true)
 			jugador.enJuego(true)
 			game.addVisual(jugador)
-			game.addVisual(repartidor)
-			if (jugador.esBlackjack()) self.terminarRonda()
+			if (jugador.esBlackjack()) {
+				repartidor.darVueltaPrimerCarta()
+				self.terminarRonda()
+			}
 			// if (repartidor.esBlackjack()) self.terminarRonda()
 		}
 		
