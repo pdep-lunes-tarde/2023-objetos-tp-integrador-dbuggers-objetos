@@ -33,7 +33,7 @@ object partida {
 	method terminarRonda() {
 		self.partidaEnJuego(false)
 		game.addVisual(cartelResultado)
-		game.schedule(5000, {self.reiniciarTablero()})
+		game.schedule(3500, {self.reiniciarTablero()})
 	}
 	
 	method reiniciarTablero() {

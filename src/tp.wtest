@@ -54,3 +54,7 @@ describe "carta" {
 		assert.equals(segundaCarta.valor(jugador), 1)
 	}
 }
+
+// Probar con dos as al principio y con varios ases
+
+
