@@ -10,7 +10,7 @@ class Jugador {
 	var property enJuego = false
 	
 	method sumaCartas() = 
-		mano.sum({ carta => carta.valor() }) // Modificar esto
+		mano.sum({ carta => carta.valor() })
 	
 	method sumaTotal() {
 		if (self.sumaCartas() <= 21 || self.asesEnManoSinModificar().isEmpty())
@@ -35,6 +35,10 @@ class Jugador {
 	}
 	
 	method pedirCarta()
+	
+	method recibirCarta(carta) {
+		self.mano().add(carta)
+	}
 }
 
 object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
@@ -48,7 +52,7 @@ object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
 	
 	method darCarta(persona) {
 		const cartaElegida = self.elegirCartaAleatorio()
-		persona.mano().add(cartaElegida)
+		persona.recibirCarta(cartaElegida)
 		cartaElegida.mostrar(persona)
 	}
 	
@@ -96,6 +100,8 @@ object jugador inherits Jugador(position = new Position(x = 2, y = 3)) {
 		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
 		if (enJuego && self.sePaso()) self.finTurno()
 	}
+	
+	
 	
 	override method finTurno() {
 		super()

@@ -23,17 +23,17 @@ describe "jugador" {
 	test "Si las dos primeras cartas suman 21 es blackjack" {
 		const primerCarta = new Carta(indice = "10♥", valor = 10)
 		const segundaCarta = new As(indice = "A♥", valor = 11)
-		jugador.mano().add(primerCarta)
-		jugador.mano().add(segundaCarta)
+		jugador.recibirCarta(primerCarta)
+		jugador.recibirCarta(segundaCarta)
 		assert.equals(jugador.esBlackjack(), true)
 	}
 	test "Si las dos primeras cartas suman mas de 21, se paso" {
 		const primerCarta = new Carta(indice = "10♥", valor = 10)
 		const segundaCarta = new Carta(indice = "6♥", valor = 6)
 		const tercerCarta = new Carta(indice = "K♣", valor = 10)
-		jugador.mano().add(primerCarta)
-		jugador.mano().add(segundaCarta)
-		jugador.mano().add(tercerCarta)
+		jugador.recibirCarta(primerCarta)
+		jugador.recibirCarta(segundaCarta)
+		jugador.recibirCarta(tercerCarta)
 		assert.equals(jugador.sePaso(), true)
 	}
 }
@@ -43,22 +43,22 @@ describe "carta" {
 		const primerCarta = new Carta(indice = "7♥", valor = 7)
 		const segundaCarta = new As(indice = "A♥", valor = 11)
 		const tercerCarta = new Carta(indice = "K♣", valor = 10)
-		jugador.mano().add(primerCarta)
-		jugador.mano().add(segundaCarta)
-		jugador.mano().add(tercerCarta)
+		jugador.recibirCarta(primerCarta)
+		jugador.recibirCarta(segundaCarta)
+		jugador.recibirCarta(tercerCarta)
 		assert.equals(segundaCarta.valor(jugador), 1)
 	}
 	
 	test "Dos ases al principio se cambia el valor de un as" {
 		const primerCarta = new As(indice = "A♣", valor = 11)
 		const segundaCarta = new As(indice = "A♥", valor = 11)
-		jugador.mano().add(primerCarta)
-		jugador.mano().add(segundaCarta)
+		jugador.recibirCarta(primerCarta)
+		jugador.recibirCarta(segundaCarta)
 		assert.equals(jugador.sumaTotal(), 12)
 	}
 	
 	test "Varios ases" {
-		7.times({i => jugador.mano().add(new As(indice = "A♣", valor = 11))})
+		7.times({i => jugador.recibirCarta(new As(indice = "A♣", valor = 11))})
 		assert.equals(jugador.sumaTotal(), 17)
 	}
 }

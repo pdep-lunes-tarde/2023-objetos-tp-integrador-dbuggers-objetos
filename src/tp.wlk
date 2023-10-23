@@ -11,6 +11,8 @@ object configuracion {
 
 object partida {
 	var property partidaEnJuego = false
+	//listaJugadores -> ej: [jugador1, jugador2, repartidor]
+	//jugadorEnJuego -> ej: jugador2
 	
 	method empezarRonda() {
 		if (not partidaEnJuego) {
@@ -21,6 +23,7 @@ object partida {
 			repartidor.enJuego(true)
 			jugador.enJuego(true)
 			game.addVisual(jugador)
+			game.addVisual(cartelTeclas)
 			if (jugador.esBlackjack()) {
 				repartidor.darVueltaPrimerCarta()
 				self.terminarRonda()
@@ -31,7 +34,6 @@ object partida {
 	}
 	
 	method terminarRonda() {
-		self.partidaEnJuego(false)
 		game.addVisual(cartelResultado)
 		game.schedule(3500, {self.reiniciarTablero()})
 	}
@@ -44,9 +46,10 @@ object partida {
 		repartidor.posUltimaCarta(5)
 		configuracion.config()
 		game.addVisual(cartelEmpezar)
+		self.partidaEnJuego(false)
 	}
 	
-	method ganador() {
+	method resultado() {
 		if (jugador.esBlackjack() && repartidor.esBlackjack()) return "Empate"
 		if (jugador.esBlackjack()) return "¡BlackJack!"
 		if (repartidor.esBlackjack()) return "Perdiste por BlackJack"
@@ -65,7 +68,7 @@ class Cartel {
 }
 
 object cartelResultado inherits Cartel {
-	method text() = partida.ganador()
+	method text() = partida.resultado()
 }
 
 object cartelEmpezar inherits Cartel {
@@ -76,5 +79,11 @@ object cartelCargando inherits Cartel {
 	method text() = "Cargando..."
 }
 
+object cartelTeclas {
+	const property position = new Position(x=game.width()-4, y=game.height()-2)
+	
+	method textColor() = "FFFFFF"
+	method text() = "Presione <p> para pedir\nPresione <s> para plantarte"
+}
 
 
