@@ -10,9 +10,9 @@ class Carta {
 	method valor(persona) = valor
 	
 	method mostrar(persona) {
-		const x = persona.posX()
-		persona.posX(x+1)
-		game.addVisualIn(self, game.at(x,persona.posY())) // Arreglar el tema del pos
+		const x = persona.posUltimaCarta()
+		persona.posUltimaCarta(x+1)
+		game.addVisualIn(self, game.at(x,persona.position().y())) // Arreglar el tema del pos
 	}
 	
 	method darVuelta() {
@@ -23,14 +23,13 @@ class Carta {
 
 class As inherits Carta {
 
-	override method valor(persona) {
-		const suma = persona.sumaTotal() // Arreglar esto
-		if (suma > 21 && valor == 11) { 
+	override method valor(persona) { // Arreglar esto
+		if (persona.sumaCartas() > 21 && valor == 11) { 
 			valor = 1
-			persona.sumaTotal(suma-10)
 		}
 		return valor
 	}
+	
 }
 
 

@@ -39,11 +39,9 @@ object partida {
 	method reiniciarTablero() {
 		game.clear()
 		jugador.mano().clear()
-		jugador.sumaTotal(0)
-		jugador.posX(5)
+		jugador.posUltimaCarta(5)
 		repartidor.mano().clear()
-		repartidor.sumaTotal(0)
-		repartidor.posX(5)
+		repartidor.posUltimaCarta(5)
 		configuracion.config()
 		game.addVisual(cartelEmpezar)
 	}
@@ -54,8 +52,8 @@ object partida {
 		if (repartidor.esBlackjack()) return "Perdiste por BlackJack"
 		if (jugador.sePaso() && repartidor.sePaso()) return "Ambos se pasaron"
 		if (jugador.sePaso()) return "Perdiste"
-		if (repartidor.sePaso() || jugador.sumaMano() > repartidor.sumaMano()) return "Ganaste"
-		if (jugador.sumaMano() == repartidor.sumaMano()) return "Empate"
+		if (repartidor.sePaso() || jugador.sumaTotal() > repartidor.sumaTotal()) return "Ganaste"
+		if (jugador.sumaTotal() == repartidor.sumaTotal()) return "Empate"
 		return "Perdiste"
 	}
 }

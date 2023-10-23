@@ -5,22 +5,30 @@ import tp.*
 
 class Jugador {
 	const property mano = new List()
-	var property sumaTotal = 0
-	const property posY // Modificar esto
-	var property posX
-	const property position = new Position(x=posX-3, y=posY)
+	const property position = new Position()
+	var property posUltimaCarta = position.x() + 3
 	var property enJuego = false
 	
-	method sumaMano() = 
-		mano.sum({carta => carta.valor(self)}) // Modificar esto
+	method sumaCartas() = 
+		mano.sum({ carta => carta.valor() }) // Modificar esto
 	
-	method sePaso() = self.sumaMano() > 21
+	method sumaTotal() {
+		if (self.sumaCartas() <= 21 || self.asesEnManoSinModificar().isEmpty())
+			return self.sumaCartas()
+		return mano.sum({ carta => carta.valor(self) })
+	}
 	
-	method text() = "Suma de cartas: " + self.sumaMano().toString()
+	method asesEnManoSinModificar() = mano.filter({
+		carta => carta.valor() == 11
+	})
+	
+	method sePaso() = self.sumaTotal() > 21
+	
+	method text() = "Suma de cartas: " + self.sumaTotal().toString()
 	
 	method textColor() = "FFFFFF"
 	
-	method esBlackjack() = self.sumaMano() == 21 && mano.size() == 2
+	method esBlackjack() = self.sumaTotal() == 21 && mano.size() == 2
 	
 	method finTurno() {
 		enJuego = false
@@ -29,7 +37,7 @@ class Jugador {
 	method pedirCarta()
 }
 
-object repartidor inherits Jugador(posY = 10, posX = 5) {
+object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
 	const property mazoEnPartida = new List()
 	
 	method repartirCartasIniciales() {
@@ -40,9 +48,7 @@ object repartidor inherits Jugador(posY = 10, posX = 5) {
 	
 	method darCarta(persona) {
 		const cartaElegida = self.elegirCartaAleatorio()
-		const suma = persona.sumaMano() // ...
 		persona.mano().add(cartaElegida)
-		persona.sumaTotal(suma + cartaElegida.valor(self)) // ...
 		cartaElegida.mostrar(persona)
 	}
 	
@@ -51,7 +57,7 @@ object repartidor inherits Jugador(posY = 10, posX = 5) {
 	}
 	
 	override method pedirCarta() {
-		if (self.sumaMano() < 16 && enJuego) {
+		if (self.sumaTotal() < 16 && enJuego) {
 			self.darCarta(self)
 			game.schedule(1000, { self.pedirCarta() })
 		}
@@ -84,7 +90,7 @@ object repartidor inherits Jugador(posY = 10, posX = 5) {
 	}
 }
 
-object jugador inherits Jugador(posY = 3, posX = 5) {
+object jugador inherits Jugador(position = new Position(x = 2, y = 3)) {
 	
 	override method pedirCarta() {
 		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
