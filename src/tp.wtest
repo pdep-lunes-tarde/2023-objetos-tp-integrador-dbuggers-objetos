@@ -50,7 +50,7 @@ describe "carta" {
 		jugador.recibirCarta(primerCarta)
 		jugador.recibirCarta(segundaCarta)
 		jugador.recibirCarta(tercerCarta)
-		assert.equals(segundaCarta.valor(jugador), 1)
+		assert.equals(jugador.sumaTotal(), 18)
 	}
 	
 	test "Dos ases al principio se cambia el valor de un as" {
@@ -66,9 +66,5 @@ describe "carta" {
 		assert.equals(jugador.sumaTotal(), 17)
 	}
 }
-
-
-
-// Probar con dos as al principio y con varios ases
 
 

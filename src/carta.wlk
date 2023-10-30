@@ -6,13 +6,11 @@ class Carta {
 	const frente = "./imagenes/cartas/carta.png"
 	const reverso = "./imagenes/cartas/back_side.png"
 	var property image = frente
-	
-	method valor(persona) = valor
-	
+
 	method mostrar(persona) {
 		const x = persona.posUltimaCarta()
 		persona.posUltimaCarta(x+1)
-		game.addVisualIn(self, game.at(x,persona.position().y())) // Arreglar el tema del pos
+		game.addVisualIn(self, game.at(x,persona.position().y()-1)) // Arreglar el tema del pos
 	}
 	
 	method darVuelta() {
@@ -23,11 +21,11 @@ class Carta {
 
 class As inherits Carta {
 
-	override method valor(persona) { // Arreglar esto
-		if (persona.sumaCartas() > 21 && valor == 11) { 
+	method cambiarValorDelAs(persona, suma) {
+		if (suma.total() > 21 && valor == 11) {
+			suma.restarAsModificado()
 			valor = 1
 		}
-		return valor
 	}
 	
 }

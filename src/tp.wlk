@@ -4,18 +4,24 @@ import jugador.*
 object configuracion {
 	
 	method teclasElegirJugador() {
+		game.addVisual(cartelInicial)
 		keyboard.num1().onPressDo { partida.asignarJugadores(1) }
 		keyboard.num2().onPressDo { partida.asignarJugadores(2) }
 		keyboard.num3().onPressDo { partida.asignarJugadores(3) }
 	}
 	
 	method configEmpezar() {
+		game.addVisual(cartelEmpezar)
+		game.addVisual(cartelMenu)
 		keyboard.space().onPressDo { partida.empezarRonda() }
+		keyboard.q().onPressDo { partida.volverAElegirJugadores() }
 	}
 	
 	method teclasJuego() {
-		keyboard.p().onPressDo { partida.jugadorActual().pedirCarta() }
+		game.addVisual(cartelTeclas)
+		keyboard.p().onPressDo {partida.jugadorActual().pedirCarta() }
 		keyboard.s().onPressDo { partida.jugadorActual().plantarse() }
+		
 	}
 }
 
@@ -35,12 +41,11 @@ object partida {
 	method asignarJugadores(n) {
 		n.times {
 			i => listaJugadores.add(
-					new Jugador(position = self.posJugadores(i))
+					new Jugador(position = self.posJugadores(i, n))
 				)
 		}
 		game.clear()
 		configuracion.configEmpezar()
-		game.addVisual(cartelEmpezar)
 	}
 	
 	method agregarJugador(jugador) {
@@ -50,18 +55,26 @@ object partida {
 	method siguienteTurno() {
 		jugadorEnJuego++
 		if (listaJugadores.size() == jugadorEnJuego) {
-			keyboard.p().onPressDo { }
-			keyboard.s().onPressDo { }
+			//keyboard.p().onPressDo { }
+			//keyboard.s().onPressDo { }
 			repartidor.empezarTurno()
 		}
 		else if (self.jugadorActual().esBlackjack()) self.siguienteTurno()
 	}
 	
-	method posJugadores(i) {
-		if (i == 1) return new Position(x = 2, y = 2)
-		if (i == 2) return new Position(x = 13, y = 2)
-		return new Position(x = 24, y = 2)
+	method posJugadores(i , cantJugadores) {
+		const posY = 3
+		if (cantJugadores == 1) return new Position(x= 13, y = posY)
+		if (cantJugadores == 2) {
+			if (i == 1) return new Position(x= 6, y = posY)
+			return new Position(x= 20, y = posY)
+		}
+		if (i == 1) return new Position(x= 3, y = posY)
+		if (i == 2) return new Position(x= 13, y = posY)
+		return new Position(x= 24, y = posY)
 	}
+	
+	method cantJugadores() = listaJugadores.size()
 	
 	method empezarRonda() {
 		if (not partidaEnJuego) {
@@ -71,9 +84,9 @@ object partida {
 			listaJugadores.forEach {
 				jugador => game.addVisual(jugador)
 			}
-			game.addVisual(cartelTeclas)
 			self.partidaEnJuego(true)
 			configuracion.teclasJuego()
+			if (self.jugadorActual().esBlackjack()) self.siguienteTurno()
 		}
 	}
 	
@@ -86,7 +99,7 @@ object partida {
 		listaJugadores.forEach {
 			jugador => game.addVisualIn(
 				self.resultado(jugador),
-				jugador.position().up(3)
+				jugador.position().up(3).right(3)
 			)
 		}
 	}
@@ -99,8 +112,16 @@ object partida {
 		repartidor.devolverCartas()
 		configuracion.configEmpezar()
 		jugadorEnJuego = 0
-		game.addVisual(cartelEmpezar)
 		self.partidaEnJuego(false)
+	}
+	
+	method volverAElegirJugadores() {
+		listaJugadores.clear()
+		jugadorEnJuego = 0
+		partidaEnJuego = false
+		repartidor.devolverCartas()
+		game.clear()
+		configuracion.teclasElegirJugador()
 	}
 	
 	method resultado(jugador) {
@@ -153,10 +174,17 @@ object cartelCargando inherits Cartel {
 }
 
 object cartelTeclas {
-	const property position = new Position(x=game.width()-4, y=game.height()-3)
+	const property position = new Position(x=game.width()-4, y=game.height()-2)
 	
 	method textColor() = "FFFFFF"
 	method text() = "Presione <p> para pedir\nPresione <s> para plantarte"
+}
+
+object cartelMenu {
+	const property position = new Position(x= 3, y=game.height()-2)
+	
+	method textColor() = "FFFFFF"
+	method text() = "Presione <q> para volver al menu"
 }
 
 
