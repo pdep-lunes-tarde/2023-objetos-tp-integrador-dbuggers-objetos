@@ -3,6 +3,8 @@ import carta.*
 import jugador.*
 import tp.*
 
+const jugador = new Jugador()
+
 describe "mazoDeCartas" {
 	test "El mazo de cartas tiene 52 cartas en total" {
 		assert.equals(mazo.mazoLleno().size(), 52)
@@ -11,11 +13,13 @@ describe "mazoDeCartas" {
 
 describe "jugador" {
 	test "El jugador empieza la ronda con dos cartas" {
+		partida.agregarJugador(jugador)
 		partida.empezarRonda()
 		const cantCartasJugador = jugador.mano().size()
 		assert.equals(cantCartasJugador, 2)
 	}
 	test "El repartidor empieza la ronda con dos cartas" {
+		partida.agregarJugador(jugador)
 		partida.empezarRonda()
 		const cantCartasRepartidor = repartidor.mano().size()
 		assert.equals(cantCartasRepartidor, 2)

@@ -2,62 +2,130 @@ import wollok.game.*
 import jugador.*
 
 object configuracion {
-	method config() {
+	
+	method teclasElegirJugador() {
+		keyboard.num1().onPressDo { partida.asignarJugadores(1) }
+		keyboard.num2().onPressDo { partida.asignarJugadores(2) }
+		keyboard.num3().onPressDo { partida.asignarJugadores(3) }
+	}
+	
+	method configEmpezar() {
 		keyboard.space().onPressDo { partida.empezarRonda() }
-		keyboard.p().onPressDo { jugador.pedirCarta() }
-		keyboard.s().onPressDo { jugador.plantarse() }
+	}
+	
+	method teclasJuego() {
+		keyboard.p().onPressDo { partida.jugadorActual().pedirCarta() }
+		keyboard.s().onPressDo { partida.jugadorActual().plantarse() }
 	}
 }
 
 object partida {
 	var property partidaEnJuego = false
-	//listaJugadores -> ej: [jugador1, jugador2, repartidor]
-	//jugadorEnJuego -> ej: jugador2
+	var property listaJugadores = new List()
+	var jugadorEnJuego = 0
+	
+	method jugadorActual() {
+		if (jugadorEnJuego < listaJugadores.size())
+			return listaJugadores.get(jugadorEnJuego)
+		return repartidor
+	}
+	
+	method esJugadorActual(jugador) = self.jugadorActual() == jugador
+	
+	method asignarJugadores(n) {
+		n.times {
+			i => listaJugadores.add(
+					new Jugador(position = self.posJugadores(i))
+				)
+		}
+		game.clear()
+		configuracion.configEmpezar()
+		game.addVisual(cartelEmpezar)
+	}
+	
+	method agregarJugador(jugador) {
+		listaJugadores.add(jugador)
+	}
+	
+	method siguienteTurno() {
+		jugadorEnJuego++
+		if (listaJugadores.size() == jugadorEnJuego) {
+			keyboard.p().onPressDo { }
+			keyboard.s().onPressDo { }
+			repartidor.empezarTurno()
+		}
+		else if (self.jugadorActual().esBlackjack()) self.siguienteTurno()
+	}
+	
+	method posJugadores(i) {
+		if (i == 1) return new Position(x = 2, y = 2)
+		if (i == 2) return new Position(x = 13, y = 2)
+		return new Position(x = 24, y = 2)
+	}
 	
 	method empezarRonda() {
 		if (not partidaEnJuego) {
 			if (game.hasVisual(cartelEmpezar)) game.removeVisual(cartelEmpezar)
-			self.partidaEnJuego(true)
 			repartidor.llenarMazo()
 			repartidor.repartirCartasIniciales()
-			repartidor.enJuego(true)
-			jugador.enJuego(true)
-			game.addVisual(jugador)
-			game.addVisual(cartelTeclas)
-			if (jugador.esBlackjack()) {
-				repartidor.darVueltaPrimerCarta()
-				self.terminarRonda()
+			listaJugadores.forEach {
+				jugador => game.addVisual(jugador)
 			}
-			// if (repartidor.esBlackjack()) self.terminarRonda()
+			game.addVisual(cartelTeclas)
+			self.partidaEnJuego(true)
+			configuracion.teclasJuego()
 		}
-		
 	}
 	
 	method terminarRonda() {
-		game.addVisual(cartelResultado)
-		game.schedule(3500, {self.reiniciarTablero()})
+		self.mostrarResultados()
+		game.schedule(5000, {self.reiniciarTablero()})
+	}
+	
+	method mostrarResultados() {
+		listaJugadores.forEach {
+			jugador => game.addVisualIn(
+				self.resultado(jugador),
+				jugador.position().up(3)
+			)
+		}
 	}
 	
 	method reiniciarTablero() {
 		game.clear()
-		jugador.mano().clear()
-		jugador.posUltimaCarta(5)
-		repartidor.mano().clear()
-		repartidor.posUltimaCarta(5)
-		configuracion.config()
+		listaJugadores.forEach {
+			jugador => jugador.devolverCartas()
+		}
+		repartidor.devolverCartas()
+		configuracion.configEmpezar()
+		jugadorEnJuego = 0
 		game.addVisual(cartelEmpezar)
 		self.partidaEnJuego(false)
 	}
 	
-	method resultado() {
-		if (jugador.esBlackjack() && repartidor.esBlackjack()) return "Empate"
-		if (jugador.esBlackjack()) return "¡BlackJack!"
-		if (repartidor.esBlackjack()) return "Perdiste por BlackJack"
-		if (jugador.sePaso() && repartidor.sePaso()) return "Ambos se pasaron"
-		if (jugador.sePaso()) return "Perdiste"
-		if (repartidor.sePaso() || jugador.sumaTotal() > repartidor.sumaTotal()) return "Ganaste"
-		if (jugador.sumaTotal() == repartidor.sumaTotal()) return "Empate"
-		return "Perdiste"
+	method resultado(jugador) {
+		if (jugador.esBlackjack() && repartidor.esBlackjack())
+			return new CartelResultado(text = "Empate", textColor = "FFFFFF")
+		
+		if (jugador.esBlackjack())
+			return new CartelResultado(text = "¡BlackJack!", textColor = "00FF00")
+		
+		if (repartidor.esBlackjack())
+			return new CartelResultado(text = "Perdiste por BlackJack")
+		
+		if (jugador.sePaso() && repartidor.sePaso())
+			return new CartelResultado(text = "Ambos se pasaron", textColor = "FFFFFF")
+		
+		if (jugador.sePaso())
+			return new CartelResultado(text = "Perdiste")
+		
+		if (repartidor.sePaso() || jugador.sumaTotal() > repartidor.sumaTotal())
+			return new CartelResultado(text = "Ganaste", textColor = "00FF00")
+		
+		if (jugador.sumaTotal() == repartidor.sumaTotal())
+			return new CartelResultado(text = "Empate", textColor = "FFFFFF")
+		
+		return new CartelResultado(text = "Perdiste")
 	}
 }
 
@@ -67,12 +135,17 @@ class Cartel {
 	method textColor() = "FFFFFF"
 }
 
-object cartelResultado inherits Cartel {
-	method text() = partida.resultado()
+class CartelResultado {
+	var property text
+	var property textColor = "FF0000"
 }
 
 object cartelEmpezar inherits Cartel {
 	method text() = "Apretar <espacio> para empezar"
+}
+
+object cartelInicial inherits Cartel {
+	method text() = "Presione del 1-3 para elegir la cantidad de jugadores"
 }
 
 object cartelCargando inherits Cartel {
@@ -80,7 +153,7 @@ object cartelCargando inherits Cartel {
 }
 
 object cartelTeclas {
-	const property position = new Position(x=game.width()-4, y=game.height()-2)
+	const property position = new Position(x=game.width()-4, y=game.height()-3)
 	
 	method textColor() = "FFFFFF"
 	method text() = "Presione <p> para pedir\nPresione <s> para plantarte"

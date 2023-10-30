@@ -6,8 +6,7 @@ import tp.*
 class Jugador {
 	const property mano = new List()
 	const property position = new Position()
-	var property posUltimaCarta = position.x() + 3
-	var property enJuego = false
+	var property posUltimaCarta = position.x() + 2
 	
 	method sumaCartas() = 
 		mano.sum({ carta => carta.valor() })
@@ -26,27 +25,40 @@ class Jugador {
 	
 	method text() = "Suma de cartas: " + self.sumaTotal().toString()
 	
-	method textColor() = "FFFFFF"
+	method textColor() {
+		if (partida.esJugadorActual(self)) return "FF00FF"
+		return "FFFFFF"
+	} 
 	
 	method esBlackjack() = self.sumaTotal() == 21 && mano.size() == 2
 	
-	method finTurno() {
-		enJuego = false
+	method pedirCarta() {
+		if (not self.sePaso()) repartidor.darCarta(self)
+		if (self.sePaso()) partida.siguienteTurno()
 	}
-	
-	method pedirCarta()
 	
 	method recibirCarta(carta) {
 		self.mano().add(carta)
 	}
+	
+	method plantarse() {
+		partida.siguienteTurno()
+	}
+	
+	method devolverCartas() {
+		self.mano().clear()
+		posUltimaCarta = position.x() + 2
+	}
 }
 
-object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
+object repartidor inherits Jugador(position = new Position(x = 13, y = 10)) {
 	const property mazoEnPartida = new List()
 	
 	method repartirCartasIniciales() {
+		partida.listaJugadores().forEach {
+			jugador => 2.times({i => self.darCarta(jugador) })
+		}
 		2.times({i => self.darCarta(self) })
-		2.times({i => self.darCarta(jugador) })
 		self.darVueltaPrimerCarta()
 	}
 	
@@ -61,11 +73,13 @@ object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
 	}
 	
 	override method pedirCarta() {
-		if (self.sumaTotal() < 16 && enJuego) {
+		if (self.sumaTotal() < 16) {
 			self.darCarta(self)
 			game.schedule(1000, { self.pedirCarta() })
 		}
-		else self.finTurno()
+		else {
+			partida.terminarRonda()
+		}
 	}
 	
 	method llenarMazo() {
@@ -82,36 +96,10 @@ object repartidor inherits Jugador(position = new Position(x = 2, y = 10)) {
 		return cartaElegida
 	}
 	
-	override method finTurno() {
-		super()
-		partida.terminarRonda()
-	}
-	
 	method empezarTurno() {
 		self.darVueltaPrimerCarta()
 		game.addVisual(self)
 		game.schedule(1000, { self.pedirCarta() })
-	}
-}
-
-object jugador inherits Jugador(position = new Position(x = 2, y = 3)) {
-	
-	override method pedirCarta() {
-		if (enJuego && not self.sePaso()) repartidor.darCarta(self)
-		if (enJuego && self.sePaso()) self.finTurno()
-	}
-	
-	
-	
-	override method finTurno() {
-		super()
-		game.schedule(750, { repartidor.empezarTurno() })
-	}
-	
-	method plantarse() {
-		if (self.enJuego()) {
-			self.finTurno()
-		}
 	}
 }
 

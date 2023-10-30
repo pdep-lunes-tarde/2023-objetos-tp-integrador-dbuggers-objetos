@@ -2,14 +2,14 @@ import tp.*
 import wollok.game.*
 
 program juego {
-	game.width(25)
+	game.width(35)
 	game.height(15)
 	
 	game.boardGround("./imagenes/fondo/fondo_blackjack.jpg")
 	
-	configuracion.config()
+	configuracion.teclasElegirJugador()
 	
-	game.addVisual(cartelEmpezar)
+	game.addVisual(cartelInicial)
 	
 	game.start()
 }
