@@ -2,7 +2,7 @@ import wollok.game.*
 
 class Carta {
 	const property indice
-	var property valor
+	const property valor
 	const frente = "./imagenes/cartas/carta.png"
 	const reverso = "./imagenes/cartas/back_side.png"
 	var property image = frente
@@ -16,16 +16,6 @@ class Carta {
 	method darVuelta() {
 		if (image == reverso) image = frente
 		else image = reverso
-	}
-}
-
-class As inherits Carta {
-
-	method cambiarValorDelAs(persona, suma) {
-		if (suma.total() > 21 && valor == 11) {
-			suma.restarAsModificado()
-			valor = 1
-		}
 	}
 	
 }

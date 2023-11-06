@@ -2,7 +2,7 @@ import tp.*
 import wollok.game.*
 
 program juego {
-	game.width(35)
+	game.width(37)
 	game.height(17)
 	
 	game.boardGround("./imagenes/fondo/fondo_blackjack.jpg")

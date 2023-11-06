@@ -41,7 +41,9 @@ object partida {
 	method asignarJugadores(n) {
 		n.times {
 			i => listaJugadores.add(
-					new Jugador(position = self.posJugadores(i, n))
+					new Jugador(position = 
+						new Position(x = self.posXJugador(i, n), y = 3)
+					)
 				)
 		}
 		game.clear()
@@ -54,24 +56,26 @@ object partida {
 	
 	method siguienteTurno() {
 		jugadorEnJuego++
-		if (listaJugadores.size() == jugadorEnJuego) {
-			//keyboard.p().onPressDo { }
-			//keyboard.s().onPressDo { }
-			repartidor.empezarTurno()
-		}
+		if (listaJugadores.size() == jugadorEnJuego) repartidor.empezarTurno()
 		else if (self.jugadorActual().esBlackjack()) self.siguienteTurno()
 	}
 	
-	method posJugadores(i , cantJugadores) {
-		const posY = 3
-		if (cantJugadores == 1) return new Position(x= 13, y = posY)
-		if (cantJugadores == 2) {
-			if (i == 1) return new Position(x= 6, y = posY)
-			return new Position(x= 20, y = posY)
+	method posXJugador(i , n) {
+		var aux = 3
+		if (n.even()) {
+			if (i < (n+1)/2) aux -= (i - n/2 - 1)*(5-n)
+			else aux -= (i - n/2)*(5-n)
 		}
-		if (i == 1) return new Position(x= 3, y = posY)
-		if (i == 2) return new Position(x= 13, y = posY)
-		return new Position(x= 24, y = posY)
+		else aux -= (i - ((n+1)/2))*(6-n)
+		return game.width() * i / (n+1) - aux
+		/* if (cantJugadores == 1) return game.center().x() - 3
+		if (cantJugadores == 2) {
+			if (i == 1) return game.width()/3 - 5
+			return game.width()*2/3 - 1
+		}
+		if (i == 1) return game.width()/4 - 5
+		if (i == 2) return game.center().x() - 3
+		return game.width()*3/4 - 1 */
 	}
 	
 	method cantJugadores() = listaJugadores.size()

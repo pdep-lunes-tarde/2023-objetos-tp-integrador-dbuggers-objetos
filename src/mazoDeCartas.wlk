@@ -16,13 +16,6 @@ object mazo {
 	method agregarCarta(palo, id) {
 		const valorCarta = valores.get(self.indicesIndexOf(id))
 		const imagen = "./imagenes/cartas/" + id + "_of_" + self.nombrePalo(palo) + ".png"
-		if (id == 'A') {
-			return new As(
-				indice = palo + id,
-				valor = valorCarta,
-				frente = imagen
-			)
-		}
 		return new Carta(
 			indice = palo + id,
 			valor = valorCarta,

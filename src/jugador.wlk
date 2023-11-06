@@ -3,20 +3,20 @@ import mazoDeCartas.*
 import wollok.game.*
 import tp.*
 
-class SumaCartas {
+/* class SumaCartas {
 	var property total = 0
 	
 	method restarAsModificado() {
 		total -= 10
 	}
-}
+} */
 
 class Jugador {
 	const property mano = new List()
 	const property position = new Position()
 	var property posUltimaCarta = position.x() + 2
 	
-	method sumaMano() = 
+	method sumaSinModificar() = 
 		mano.sum({ carta => carta.valor() })
 	/*
 	method sumaTotal() {
@@ -25,25 +25,25 @@ class Jugador {
 			return suma.total()
 		self.actualizarAses(suma)
 		return suma.total()
-	} */
+	}
 	
 	method sumaTotal() {
-		const suma = new SumaCartas(total = self.sumaMano())
-		self.asesEnManoSinModificar().forEach { as =>
-			if(suma.total() <= 21) return suma.total()
-
-			suma.restarAsModificado()
+		const suma = new SumaCartas(total = self.sumaSinModificar())
+		self.asesEnMano().forEach { as =>
+			if(suma.total() > 21) suma.restarAsModificado()
 		}
 		return suma.total()
+	} */
+	
+	method sumaTotal() =
+		self.calcularSumaConAses(self.asesEnMano().size(), self.sumaSinModificar())
+	
+	method calcularSumaConAses(cantAases, suma) {
+		if(suma <= 21 || cantAases == 0) return suma
+		return self.calcularSumaConAses(cantAases-1, suma-10)
 	}
 	
-	method actualizarAses(suma) {
-		self.asesEnManoSinModificar().forEach {
-			as => as.cambiarValorDelAs(self, suma)
-		}
-	}
-	
-	method asesEnManoSinModificar() = mano.filter({
+	method asesEnMano() = mano.filter({
 		carta => carta.valor() == 11
 	})
 	
@@ -77,7 +77,7 @@ class Jugador {
 	}
 }
 
-object repartidor inherits Jugador(position = new Position(x = 13, y = game.height()-4)) {
+object repartidor inherits Jugador(position = new Position(x = game.width()/2-3, y = game.height()-4)) {
 	const property mazoEnPartida = new List()
 	
 	method repartirCartasIniciales() {
@@ -128,5 +128,3 @@ object repartidor inherits Jugador(position = new Position(x = 13, y = game.heig
 		game.schedule(1000, { self.pedirCarta() })
 	}
 }
-
-
